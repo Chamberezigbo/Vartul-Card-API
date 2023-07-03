@@ -3,22 +3,16 @@ const { body, validationResult } = require("express-validator");
 //validate middleware//
 
 const validateUserInput = [
-	body("email")
-		.isEmail()
-		.normalizeEmail()
-		.withMessage("Please provide a valid email address."),
-	body("password")
-		.isLength({ min: 8 })
-		.withMessage("Password must be at least 8 characters long.")
-		.matches(/\d/)
+	body("logo").trim().optional(), // Make the email field optional
+	body("description")
+		.isLength({ max: 200 })
+		.withMessage("description must not be more than 200 words")
+		.notEmpty()
 		.withMessage("Password must contain at least one digit."),
-	body("fullName").notEmpty().trim().withMessage("Full name is required"),
-	body("phone")
-		.isMobilePhone()
+	body("name").notEmpty().trim().withMessage("name is required"),
+	body("location")
+		.notEmpty()
 		.withMessage("Please provide a valid phone number."),
-	body("dateOfBirth")
-		.isDate()
-		.withMessage("Please provide a valid date of birth."),
 ];
 const validateMiddleware = (req, res, next) => {
 	const errors = validationResult(req);

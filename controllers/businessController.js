@@ -1,7 +1,9 @@
+connection = require("../db");
+
 const postBusinessData = async (req, res) => {
 	const initBusinessData = req.body;
 	const user_id = req.user.userId;
-	const businessData = { ...businessData, user_id };
+	const businessData = { ...initBusinessData, user_id };
 
 	try {
 		// check if email exists//
@@ -28,7 +30,7 @@ const postBusinessData = async (req, res) => {
 		//! insert user into database//
 		const query = await new Promise((resolve, reject) => {
 			connection.query(
-				"INSERT INTO business_details (`user_id`, `name`, `description`, `logo`, `location`) VALUES (?, ?, ?, ?, ?, ?)",
+				"INSERT INTO business_details (`user_id`, `name`, `description`, `logo`, `location`) VALUES (?, ?, ?, ?, ?)",
 				[
 					businessData.user_id,
 					businessData.name,
@@ -43,10 +45,11 @@ const postBusinessData = async (req, res) => {
 			);
 		});
 		console.log("Business inserted");
-		res.status(200).json({ success: true, message: savedUser });
-	} catch (error) {}
-
-	res.status(200).send(modifiedBusinessData);
+		res.status(200).json({ success: true, message: businessData });
+	} catch (error) {
+		console.log("Error inserting business:", error.message);
+		res.status(500).json({ message: error.message, success: false });
+	}
 };
 
 module.exports = { postBusinessData };

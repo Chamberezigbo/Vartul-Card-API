@@ -59,6 +59,7 @@ const postUser = async (req, res) => {
 			);
 		});
 		const token = generateToken(user.user_id);
+		delete user.password;
 		savedUser = { ...user, token };
 		console.log("User inserted");
 		res.status(200).json({ success: true, message: savedUser });
@@ -68,6 +69,49 @@ const postUser = async (req, res) => {
 	}
 };
 
+const loginUser = async (req, res) => {
+	const { email, password } = req.body;
+
+	try {
+		// check if email exists//
+		const emailExistQuery = await new Promise((resolve, reject) => {
+			connection.query(
+				"SELECT * FROM users WHERE email=?",
+				[email],
+				(err, result) => {
+					if (err) {
+						reject(err);
+					} else {
+						resolve(result);
+					}
+				}
+			);
+		});
+		if (emailExistQuery.length > 0) {
+			const dbPassword = emailExistQuery[0].password;
+			const user_id = emailExistQuery[0].user_id;
+			bcrypt.compare(password, dbPassword, (err, result) => {
+				if (err) {
+					res.status(500).json({ message: err.message });
+				} else if (result) {
+					const token = generateToken(user_id);
+					res.status(200).json({
+						success: true,
+						message: "User successfully logged in",
+						token,
+					});
+				} else {
+					res.status(500).json({
+						success: false,
+						message: "Incorrect credentials",
+					});
+				}
+			});
+		}
+	} catch (error) {}
+};
+
 module.exports = {
 	postUser,
+	loginUser,
 };
