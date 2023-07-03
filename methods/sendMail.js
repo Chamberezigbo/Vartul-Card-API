@@ -3,12 +3,12 @@
 const nodemailer = require("nodemailer");
 // Create the transporter
 const transporter = nodemailer.createTransport({
-	host: "mail.defiprosolutions.com",
-	port: 465,
+	host: process.env.EMAIL_HOST,
+	port: process.envEMAIL_PORT,
 	secure: true, // upgrade later with STARTTLS
 	auth: {
-		user: "info@defiprosolutions.com",
-		pass: "N,JT8,~{@XGS",
+		user: process.env.EMAIL_USERNAME,
+		pass: process.env.EMAIL_PASSWORD,
 	},
 });
 
