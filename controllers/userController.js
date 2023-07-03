@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const connection = require("../db");
 const generateRandomId = require("../methods/randomId");
 const generateToken = require("../methods/generateToken");
+const hashPassword = require("../methods/hashingPassword");
+const invalidatedTokens = []; // Array to store invalidated tokens
 
 const postUser = async (req, res) => {
 	let initUser = req.body;
@@ -10,14 +12,6 @@ const postUser = async (req, res) => {
 
 	try {
 		user = { ...initUser, user_id };
-		//generate unqiue salting
-		const saltRounds = 10;
-		const salt = await bcrypt.genSalt(saltRounds);
-
-		// hash the password using salt//
-		const hashPassword = await bcrypt.hash(user.password, salt);
-		// save the hashed password back to user object//
-		user["password"] = hashPassword;
 
 		// check if email exists//
 		const emailExistQuery = await new Promise((resolve, reject) => {
@@ -39,6 +33,11 @@ const postUser = async (req, res) => {
 				success: false,
 			});
 		}
+
+		// hash the password using salt//
+		const hashedPassword = await hashPassword(user.password);
+		// save the hashed password back to user object//
+		user["password"] = hashedPassword;
 
 		//! insert user into database//
 		const query = await new Promise((resolve, reject) => {
@@ -108,10 +107,32 @@ const loginUser = async (req, res) => {
 				}
 			});
 		}
-	} catch (error) {}
+	} catch (error) {
+		console.log("Error login:", err.message);
+		res.status(500).json({ message: err.message, success: false });
+	}
+};
+
+const logoutUser = (req, res) => {
+	// Clear the authentication token (JWT)
+	res.clearCookie("token"); // Clear the token from cookies
+
+	// Invalidate the token server-side (optional)
+	// Assuming you have the token stored in a variable
+	const token = req.headers.authorization.split(" ")[1];
+	invalidatedTokens.push(token); // Add the token to the blacklist
+
+	// Clear session-related data (if applicable)
+	req.session.destroy(); // Clear the session data
+
+	// Optionally regenerate CSRF token (if CSRF protection is implemented)
+
+	res.status(200).json({ message: "Logged out successfully" });
 };
 
 module.exports = {
 	postUser,
 	loginUser,
+	logoutUser,
+	invalidatedTokens,
 };
