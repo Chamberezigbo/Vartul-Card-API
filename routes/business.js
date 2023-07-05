@@ -4,14 +4,14 @@ const router = express.Router();
 const businessController = require("../controllers/businessController");
 const authenticationToken = require("../middleware/authentication");
 const {
-	validateUserInput,
+	validateBusinessInput,
 	validateMiddleware,
-} = require("../middleware/validateBusiness");
+} = require("../middleware/validate");
 
 router.post(
 	"/",
 	authenticationToken,
-	validateUserInput,
+	validateBusinessInput,
 	validateMiddleware,
 	businessController.postBusinessData
 );

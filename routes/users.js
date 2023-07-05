@@ -7,9 +7,8 @@ const authentication = require("../middleware/authentication");
 const {
 	validateMiddleware,
 	validateUserInput,
-} = require("../middleware/validateUser");
-
-const validateLoginCredentials = require("../middleware/validateLoginCredential");
+	validateUserLogin,
+} = require("../middleware/validate");
 
 // Define routes for users
 router.post(
@@ -22,8 +21,8 @@ router.post(
 // routes for login//
 router.post(
 	"/login",
-	validateLoginCredentials.validateUserInput,
-	validateLoginCredentials.validateMiddleware,
+	validateUserLogin,
+	validateMiddleware,
 	userController.loginUser
 );
 

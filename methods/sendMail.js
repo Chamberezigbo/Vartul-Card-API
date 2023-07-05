@@ -4,7 +4,7 @@ const nodemailer = require("nodemailer");
 // Create the transporter
 const transporter = nodemailer.createTransport({
 	host: process.env.EMAIL_HOST,
-	port: process.envEMAIL_PORT,
+	port: process.env.EMAIL_PORT,
 	secure: true, // upgrade later with STARTTLS
 	auth: {
 		user: process.env.EMAIL_USERNAME,
@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 function sendMail(email, inputText, callback) {
 	// Compose the email message
 	const mailOptions = {
-		from: "your-email@example.com",
+		from: "tekprenuers",
 		to: email,
 		subject: "Password Reset",
 		text: inputText,

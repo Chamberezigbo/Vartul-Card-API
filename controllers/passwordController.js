@@ -1,5 +1,3 @@
-const nodemailer = require("nodemailer");
-const bcrypt = require("bcrypt");
 const hashPassword = require("../methods/hashingPassword");
 const sendMail = require("../methods/sendMail");
 const generateResetToken = require("../methods/passwordReseToken");
@@ -119,31 +117,49 @@ const postForgotPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
 	const { resetToken, newPassword } = req.body;
 
-	// check if email exists//
-	const tokenExistQuery = await new Promise((resolve, reject) => {
-		connection.query(
-			"SELECT * FROM reset_password WHERE token=?",
-			[resetToken],
-			(err, result) => {
-				if (err) {
-					reject(err);
-				} else {
+	try {
+		// check if email exists//
+		const tokenExistQuery = await new Promise((resolve, reject) => {
+			connection.query(
+				"SELECT * FROM reset_password WHERE token=?",
+				[resetToken],
+				(err, result) => {
+					if (err) {
+						reject(err);
+					} else {
+						resolve(result);
+					}
+				}
+			);
+		});
+		if (tokenExistQuery.length == 0) {
+			return res
+				.status(400)
+				.json({ success: false, message: "Invalid reset token." });
+		}
+		if (parseInt(tokenExistQuery[0].expiration_time) < new Date()) {
+			return res
+				.status(400)
+				.json({ success: false, message: "Reset token has expired." });
+		}
+		const hashedPassword = await hashPassword(newPassword);
+		// Save the reset token and its expiration date in your database (e.g., using a User model or a dedicated ResetToken model)
+		const query = await new Promise((resolve, reject) => {
+			connection.query(
+				"UPDATE users SET `password` = ? WHERE `email` = ?",
+				[hashedPassword, tokenExistQuery[0].email],
+				(err, result) => {
+					if (err) return reject(err);
 					resolve(result);
 				}
-			}
-		);
-	});
-	if (tokenExistQuery.length == 0) {
-		return res
-			.status(400)
-			.json({ success: false, message: "Invalid reset token." });
+			);
+		});
+
+		res.status(200).json({ message: "Password reset successful." });
+	} catch (error) {
+		console.log("Error Updating user password:", error.message);
+		res.status(500).json({ message: error.message, success: false });
 	}
-	if (tokenExistQuery[0].expiration_time < new Date()) {
-		return res
-			.status(400)
-			.json({ success: false, message: "Reset token has expired." });
-	}
-	const hashedPassword = await hashPassword(newPassword);
 };
 
-module.exports = { postForgotPassword };
+module.exports = { postForgotPassword, resetPassword };
