@@ -1,21 +1,18 @@
 const express = require("express");
 const router = express.Router();
-
-const { upload } = require("../methods/imagekitStorage");
-const businessController = require("../controllers/businessController");
 const authenticationToken = require("../middleware/authentication");
+const { postSocialLink } = require("../controllers/socialLinkController");
 const {
-	validateBusinessInput,
+	validateSocialInput,
 	validateMiddleware,
 } = require("../middleware/validate");
 
 router.post(
 	"/",
 	authenticationToken,
-	validateBusinessInput,
+	validateSocialInput,
 	validateMiddleware,
-	upload.single("image"),
-	businessController.postBusinessData
+	postSocialLink
 );
 
 module.exports = router;

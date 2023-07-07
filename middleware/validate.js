@@ -22,16 +22,13 @@ const validateUserInput = [
 ];
 // validate business rules//
 const validateBusinessInput = [
-	body("logo").trim().optional(), // Make the email field optional
 	body("description")
 		.isLength({ max: 200 })
 		.withMessage("description must not be more than 200 words")
 		.notEmpty()
-		.withMessage("Password must contain at least one digit."),
+		.withMessage("description of your business must be provided."),
 	body("name").notEmpty().trim().withMessage("name is required"),
-	body("location")
-		.notEmpty()
-		.withMessage("Please provide a valid phone number."),
+	body("location").notEmpty().withMessage("Please provide a location."),
 ];
 
 //validate login user input//
@@ -61,6 +58,12 @@ const validateResetPassword = [
 		.withMessage("Password must contain at least one digit."),
 ];
 
+const validateSocialInput = [
+	body("facebook").trim().optional(), // Make the email field optional
+	body("linkedIn").trim().optional(),
+	body("Instagram").trim().optional(),
+];
+
 const validateMiddleware = (req, res, next) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -79,4 +82,5 @@ module.exports = {
 	validateUserLogin,
 	validateForgotPassword,
 	validateResetPassword,
+	validateSocialInput,
 };
