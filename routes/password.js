@@ -2,7 +2,7 @@ const express = require("express");
 const {
 	postForgotPassword,
 	resetPassword,
-} = require("../controllers/passwordController");
+} = require("../controllers/passwordcontroller");
 const router = express.Router();
 const {
 	validateMiddleware,
