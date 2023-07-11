@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { upload } = require("../methods/imagekitStorage");
-const businessController = require("../controllers/businesscontroller");
+const businessController = require("../controllers/businessController");
 const authenticationToken = require("../middleware/authentication");
 const {
 	validateBusinessInput,

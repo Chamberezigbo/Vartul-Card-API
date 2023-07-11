@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const secretKey = process.env.SECRET_KEY;
-const { invalidatedTokens } = require("../controllers/usercontroller");
+const { invalidatedTokens } = require("../controllers/usersController");
 
 const authenticationToken = (req, res, next) => {
 	const authHeader = req.headers.authorization;

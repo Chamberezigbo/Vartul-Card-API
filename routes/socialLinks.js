@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authenticationToken = require("../middleware/authentication");
-const { postSocialLink } = require("../controllers/socialLinkcontroller");
+const { postSocialLink } = require("../controllers/socialLinkController");
 const {
 	validateSocialInput,
 	validateMiddleware,
