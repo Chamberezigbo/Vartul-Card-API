@@ -13,7 +13,11 @@ const passwordRouter = require("./routes/password");
 const socialRouter = require("./routes/socialLinks");
 
 app.use(express.json());
-app.use(cors());
+// Use the cors middleware to allow cross-origin requests
+app.use(cors({
+  origin: 'http://localhost:3000'
+}));
+
 app.use(
 	session({
 		secret: process.env.SECRET_KEY,
