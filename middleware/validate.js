@@ -1,4 +1,4 @@
-const { body, validationResult } = require("express-validator");
+const { body, validationResult, check } = require("express-validator");
 
 //validate middleware//
 // validate signup credentials
@@ -21,15 +21,15 @@ const validateUserInput = [
 		.withMessage("Please provide a valid date of birth."),
 ];
 // validate business rules//
-const validateBusinessInput = [
-	body("description")
-		.isLength({ max: 200 })
-		.withMessage("description must not be more than 200 words")
-		.notEmpty()
-		.withMessage("description of your business must be provided."),
-	body("name").notEmpty().trim().withMessage("name is required"),
-	body("location").notEmpty().withMessage("Please provide a location."),
-];
+// const validateBusinessInput = [
+// 	check("description")
+// 		.isLength({ max: 200 })
+// 		.withMessage("description must not be more than 200 words")
+// 		.notEmpty()
+// 		.withMessage("description of your business must be provided."),
+// 	check("name").notEmpty().trim().withMessage("name is required"),
+// 	check("location").notEmpty().withMessage("Please provide a location."),
+// ];
 
 //validate login user input//
 const validateUserLogin = [
@@ -78,7 +78,7 @@ const validateMiddleware = (req, res, next) => {
 module.exports = {
 	validateMiddleware,
 	validateUserInput,
-	validateBusinessInput,
+	// validateBusinessInput,
 	validateUserLogin,
 	validateForgotPassword,
 	validateResetPassword,

@@ -59,7 +59,7 @@ const postBusinessData = async (req, res) => {
 		res.status(200).json({ success: true, message: businessData });
 	} catch (error) {
 		console.log("Error inserting business:", error.message);
-		res.status(500).json({ message: error.message, success: false });
+		res.status(500).json({ error: error.message, success: false });
 	}
 };
 
